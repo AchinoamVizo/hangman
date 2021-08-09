@@ -1,4 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
+import * as bootstrap from 'bootstrap';
+import { GameService } from '../services/game.service';
+import { UsersService } from '../services/users.service';
 
 @Component({
   selector: 'app-game',
@@ -7,7 +10,9 @@ import { Component, OnInit } from '@angular/core';
 })
 export class GameComponent implements OnInit {
 
-  constructor() { }
+  constructor(public gameService: GameService, public usersService: UsersService) {
+    this.gameService.newGame();
+  }
 
   ngOnInit(): void {
   }

@@ -1,1 +1,7 @@
-<p>details works!</p>
+<div class="align-middle">
+    <p>level: {{gameService.level}}</p>
+    <p class="d-inline">the using char:</p>
+    <p class="d-inline p-2  " *ngFor="let letter of gameService.selectedLettersArray"> ,{{letter}} </p>
+    <p>Wrong Guesses :{{gameService.index}} of 6</p>
+    <p class="d-inline p-2" *ngFor='let char of gameService.arrayWord'>{{char}} </p>
+</div>
