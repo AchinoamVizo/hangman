@@ -1,0 +1,8 @@
+<div>
+  <p class="mb-0">Level: {{ level }}</p>
+  <p class="d-inline">The selected letters:</p>
+  <p class="d-inline " *ngFor="let letter of selectedLettersArray">
+    {{ letter }},
+  </p>
+  <p>Wrong Guesses: {{ countErrorLetters }} of 6</p>
+</div>

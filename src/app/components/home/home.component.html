@@ -1,0 +1,33 @@
+<div class="height-contain">
+  <h1 class="fw-bold fs-title width-title text-center mb-1 pt-5">
+    hangman game
+  </h1>
+  <div
+    class="
+      d-flex
+      flex-column
+      bd-highlight
+      mb-3
+      mt-3
+      position-absolute
+      top-50
+      start-50
+      translate-middle
+    "
+  >
+    <button
+      type="button"
+      class="p-2 bd-highlight btn btn-warning btn-lg mb-2"
+      [routerLink]="['/login']"
+    >
+      {{ (user$ | async) ? "play game" : "sign in / signup" }}
+    </button>
+    <button
+      type="button"
+      class="p-2 bd-highlight btn btn-warning btn-lg"
+      [routerLink]="['/scoreboard']"
+    >
+      scoreboard
+    </button>
+  </div>
+</div>

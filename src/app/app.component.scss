@@ -1,0 +1,16 @@
+$headerHeight: 10vh;
+
+.mt-200 {
+  margin-top: 200px;
+}
+.background-img {
+  background-size: cover;
+  background-image: url("/assets/images/background-home.jpg");
+}
+.header-height {
+  height: $headerHeight;
+}
+
+.h-100vh {
+    height: 100vh
+}

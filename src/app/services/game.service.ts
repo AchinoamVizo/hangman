@@ -1,100 +1,145 @@
+import { Route } from '@angular/compiler/src/core';
 import { Injectable } from '@angular/core';
+import { Router } from '@angular/router';
 import * as bootstrap from 'bootstrap';
 import { RandomWordService } from './random-word.service';
+import { ScoreboardService } from './scoreboard.service';
+import { UsersService } from './users.service';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class GameService {
-  myModal?: bootstrap.Modal
-
-  randomWord: string = "";
-  index: number = 0;
-  word: string = ''
-  arrayWord: string[] = []
-  selectedLettersArray: string[] = []
+  gameModal?: bootstrap.Modal;
+  randomWord: string = '';
+  countErrorLetters: number = 0;
+  arrayWord: string[] = [];
+  selectedLettersArray: string[] = [];
   level: number = 1;
-  count: number = 0;
+  countCorectLetters: number = 0;
   isSelectedLetter: boolean = false;
-  grade: number = 0;
-  temp: string[] = []
+  points: number = 0;
+  isGameOverOrLevelFinisht: boolean = false;
 
-  constructor(private randomWordService: RandomWordService) {
-    this.randomWordFunc();
-    this.myModal = new bootstrap.Modal(document.getElementById('exampleModal') as Element, undefined)
-  }
+  constructor(
+    private randomWordService: RandomWordService,
+    private scoreboardService: ScoreboardService,
+    private router: Router,
+    private userService: UsersService
+  ) {}
 
   randomWordFunc() {
     this.randomWordService.getWord().subscribe(
-      data => {
+      (data) => {
         this.randomWord = data.word;
-        this.buildWordwith_();
-        console.log(data.word)
+        this.arrayWord = Array(this.randomWord.length).fill('_');
+        console.log(data.word);
       },
-      err => console.log(err)
-    )
+      (err) => console.log(err)
+    );
   }
 
-  buildWordwith_() {
-    this.arrayWord = []
-    for (let index = 0; index < this.randomWord.length; index++) {
-      this.arrayWord.push("_")
-    }
-  }
-
-  //check if the letter is a letter of the word
+  /**
+   * check if the letter is a letter of the word
+   * @param char
+   */
   checkLetter(char: string) {
-    if (this.count == this.randomWord.length)
-      this.myModal?.show();
-    else if (this.index == 6)
-      this.myModal?.show();
-    else {
-      if (this.selectedLettersArray.indexOf(char) != -1)
-        this.isSelectedLetter = true;
-      else if (this.randomWord.indexOf(char) == -1) {
-        this.selectedLettersArray.push(char);
-        this.index++;
-        this.isSelectedLetter = false;
-      }
-      else {
-        this.isSelectedLetter = false;
-        this.selectedLettersArray.push(char);
-        while (this.randomWord.indexOf(char) != -1) {
-          this.count++;
-          this.arrayWord[this.randomWord.indexOf(char)] = char
-          this.temp = this.randomWord.split("");
-          this.temp[this.randomWord.indexOf(char)] = " "
-          this.randomWord = this.temp.join('');
-          this.grade += 1;
-        }
-      }
-      if (this.count == this.randomWord.length)
-        this.myModal?.show();
-      if (this.index == 6)
-        this.myModal?.show();
+    if (this.checkShowModal()) return;
+
+    //if the letter was selected
+    this.isSelectedLetter = this.selectedLettersArray.includes(char);
+    if (this.isSelectedLetter) return;
+
+    this.selectedLettersArray.push(char);
+
+    //if the letter not in the random word
+    if (!this.randomWord.includes(char)) {
+      this.countErrorLetters++;
+    } else {
+      //if letter is in the random word and was not selected
+      this.replaceDashes(char);
+      this.countCorectLetters++;
+      this.points += 1;
     }
+
+    this.checkShowModal();
   }
 
+  private replaceDashes(char: string) {
+    const indexes = this.getMatchingCharIndex(this.randomWord, char);
+    this.arrayWord = this.arrayWord.map((c, i) =>
+      indexes.includes(i) ? char : c
+    );
+  }
 
+  private getMatchingCharIndex(word: string, char: string): number[] {
+    const indexes = [];
+    for (let index = 0; index < word.length; index++) {
+      if (word[index] === char) indexes.push(index);
+    }
+    return indexes;
+  }
 
-  nextLevel() {
+  // check if the level over
+  private checkShowModal(): boolean {
+    if (this.countCorectLetters == this.randomWord.length) {
+      this.showNextLevel();
+      return true;
+    } else if (this.countErrorLetters == 6) {
+      this.showGameOver();
+      return true;
+    }
+    return false;
+  }
+
+  private showNextLevel() {
+    this.isGameOverOrLevelFinisht = false;
+    this.gameModal?.show();
+  }
+
+  private showGameOver() {
+    this.isGameOverOrLevelFinisht = true;
+    this.gameModal?.show();
+  }
+
+  public nextLevel() {
     this.level++;
-    this.count = 0
+    this.countCorectLetters = 0;
     this.selectedLettersArray = [];
-    this.index = 0;
-    this.randomWordFunc()
-    this.myModal?.hide();
-
+    this.countErrorLetters = 0;
+    this.randomWordFunc();
+    this.hideModal();
   }
 
-
-  newGame() {
+  public newGame() {
+    this.hideModal();
+    this.gameModal = new bootstrap.Modal(
+      document.getElementById('gameOverModal') as Element,
+      undefined
+    );
     this.level = 1;
-    this.count = 0
+    this.countCorectLetters = 0;
     this.selectedLettersArray = [];
-    this.index = 0;
-    this.grade = 0
-    this.randomWordFunc()
-    this.myModal?.hide();
+    this.countErrorLetters = 0;
+    this.points = 0;
+    this.randomWordFunc();
+  }
+
+  async showScoreboard() {
+    await this.addItem();
+    await this.navigateScoreboard();
+    this.hideModal();
+  }
+
+  private addItem() {
+    return this.scoreboardService.addItem(this.points);
+  }
+
+  private navigateScoreboard() {
+    return this.router.navigate(['scoreboard']);
+  }
+
+  private hideModal() {
+    this.gameModal?.hide();
   }
 }

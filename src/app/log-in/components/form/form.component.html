@@ -1,0 +1,38 @@
+<form class="position-absolute top-50 start-50 translate-middle col-5">
+  <div class="btn-group" role="group" aria-label="Basic example "></div>
+  <h2 class="text-center">{{ isSigninOrSignupForm ? "Signup" : "Signin" }}</h2>
+
+  <div class="mb-3">
+    <label for="exampleInputEmail1" class="form-label">Email address</label>
+    <input type="text" class="form-control" name="mail" [(ngModel)]="mail" />
+    <div id="emailHelp" class="form-text mt-o">
+      We'll never share your email with anyone else.
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <label for="exampleInputPassword1" class="form-label">Password</label>
+    <input
+      type="password"
+      class="form-control"
+      id="exampleInputPassword1"
+      name="password"
+      [(ngModel)]="password"
+    />
+  </div>
+
+  <div class="p-3">
+    <a (click)="changeStatusForm()" class="link-dark"
+      >{{
+        isSigninOrSignupForm
+          ? "Do you have an account?
+            Signin"
+          : "Don't have an account? Sign Up"
+      }}
+    </a>
+  </div>
+
+  <button (click)="sign()" class="btn btn-warning text-white float-end btn-lg">
+    {{ isSigninOrSignupForm ? "create account" : "signin" }}
+  </button>
+</form>

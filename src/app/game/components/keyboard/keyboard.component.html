@@ -1,0 +1,15 @@
+<div>
+  <div *ngIf="isSelectedLetter" class="alert alert-warning" role="alert">
+    this letter sellected!
+  </div>
+  <div class="w-300 rounded mx-auto d-block">
+    <button
+      type="button"
+      class="btn btn-info mx-1 mt-1 mb-1 btn-lg"
+      *ngFor="let char of keyboard"
+      (click)="checkLetter(char)"
+    >
+      {{ char }}
+    </button>
+  </div>
+</div>

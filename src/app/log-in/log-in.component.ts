@@ -3,11 +3,13 @@ import { Component, OnInit } from '@angular/core';
 @Component({
   selector: 'app-log-in',
   templateUrl: './log-in.component.html',
-  styleUrls: ['./log-in.component.scss']
+  styleUrls: ['./log-in.component.scss','../app.component.scss']
 })
 export class LogInComponent implements OnInit {
 
-  constructor() { }
+  constructor() { 
+    
+  }
 
   ngOnInit(): void {
   }
